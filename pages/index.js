@@ -1,40 +1,13 @@
+
 import { Box, Button, Text, TextField, Image } from "@skynexui/components";
-
+import { useRouter } from 'next/router';
 import appConfig from "../config.json";
+import {useState} from "react";
 
-const GlobalStyles = () => {
-  return (
-    <style global jsx>{`
-      * {
-        margin: 0;
-        padding: 0;
-        box-sizing: border-box;
-        list-style: none;
-      }
-      body {
-        font-family: "Consolas", sans-serif;
-      }
-      /* App fit Height */
-      html,
-      body,
-      #__next {
-        min-height: 100vh;
-        display: flex;
-        flex: 1;
-      }
-      #__next {
-        flex: 1;
-      }
-      #__next > * {
-        flex: 1;
-      }
-      /* ./App fit Height */
-    `}</style>
-  );
-};
+
 
 const Title = (props) => {
-  const Tag = props.tag || 'h1';
+  const Tag = props.tag || "h1";
   return (
     <>
       <Tag>{props.children}</Tag>
@@ -63,19 +36,19 @@ export default HomePage;
 */
 
 export default function PaginaInicial() {
-  const username = "GLaDOS";
-
+  //const username = "GLaDOS";
+  const [username, setUsername] = useState();
+  const router = useRouter();
   return (
     <>
-      <GlobalStyles />
+
       <Box
         styleSheet={{
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
           //backgroundColor: appConfig.theme.colors.primary[500],
-          backgroundImage:
-            `url(cake.png)`,
+          backgroundImage: `url(cake.png)`,
           backgroundRepeat: "no-repeat",
           backgroundSize: "cover",
           backgroundBlendMode: "multiply",
@@ -102,6 +75,11 @@ export default function PaginaInicial() {
           {/* Formulário */}
           <Box
             as="form"
+            onSubmit={(event)=>{
+              event.preventDefault();
+              console.log("submitted!");
+              router.push('/chat')
+            }}
             styleSheet={{
               display: "flex",
               flexDirection: "column",
@@ -112,8 +90,10 @@ export default function PaginaInicial() {
               marginBottom: "32px",
             }}
           >
-            <Title tag="h2">Welcome to the Aperture Science Enrichment Center!</Title>
-            
+            <Title tag="h2">
+              Welcome to the Aperture Science Enrichment Center!
+            </Title>
+
             <Text
               variant="body3"
               styleSheet={{
@@ -123,9 +103,24 @@ export default function PaginaInicial() {
             >
               {appConfig.name}
             </Text>
-
-            <TextField
-              fullWidth
+            {/*<input
+              type="text"
+              
+              onChange={(event) => {
+                const userinput = event.target.value;
+                console.log(userinput);
+                setUsername(userinput)
+              }}
+            ></input>*/}
+            <TextField         
+                 fullWidth
+                 value={username}
+                 onChange={(event) => {
+                  const input = event.target.value;
+                  //console.log(userinput);
+                  setUsername(input)
+ 
+                }}
               textFieldColors={{
                 neutral: {
                   textColor: appConfig.theme.colors.neutrals[200],
@@ -170,7 +165,7 @@ export default function PaginaInicial() {
                 borderRadius: "50%",
                 marginBottom: "16px",
               }}
-              src={"glados.png"}
+              src={`https://github.com/${username}.png`}
             />
             <Text
               variant="body4"
