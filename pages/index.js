@@ -119,7 +119,6 @@ export default function PaginaInicial() {
                   const input = event.target.value;
                   //console.log(userinput);
                   setUsername(input)
- 
                 }}
               textFieldColors={{
                 neutral: {
