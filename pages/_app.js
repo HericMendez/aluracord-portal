@@ -1,4 +1,4 @@
-const GlobalStyles = () => {
+const GlobalStyle = () => {
     return (
       <style global jsx>{`
         * {
@@ -32,7 +32,7 @@ const GlobalStyles = () => {
 export default function App({Component, pageProps}){
     return(
         <>
-            <GlobalStyles />
+            <GlobalStyle />
             <Component{...pageProps} />
         </>
     )

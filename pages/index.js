@@ -1,10 +1,8 @@
-
 import { Box, Button, Text, TextField, Image } from "@skynexui/components";
-import { useRouter } from 'next/router';
+import { useRouter } from "next/router";
 import appConfig from "../config.json";
-import {useState} from "react";
-
-
+import { useState } from "react";
+import ValidateUsername from "./validations.js";
 
 const Title = (props) => {
   const Tag = props.tag || "h1";
@@ -37,11 +35,19 @@ export default HomePage;
 
 export default function PaginaInicial() {
   //const username = "GLaDOS";
-  const [username, setUsername] = useState();
+  const [username, setUsername] = useState("");
+  const [photo, setPhoto] = useState("");
+
+  const [validUser, setValidUser] = useState({
+    valid: true,
+    username: "github",
+    link: "",
+    src: "https://github.githubassets.com/images/modules/logos_page/GitHub-Mark.png",
+  });
+
   const router = useRouter();
   return (
     <>
-
       <Box
         styleSheet={{
           display: "flex",
@@ -75,10 +81,10 @@ export default function PaginaInicial() {
           {/* Formulário */}
           <Box
             as="form"
-            onSubmit={(event)=>{
+            onSubmit={(event) => {
               event.preventDefault();
               console.log("submitted!");
-              router.push('/chat')
+              router.push("/chat");
             }}
             styleSheet={{
               display: "flex",
@@ -112,14 +118,17 @@ export default function PaginaInicial() {
                 setUsername(userinput)
               }}
             ></input>*/}
-            <TextField         
-                 fullWidth
-                 value={username}
-                 onChange={(event) => {
-                  const input = event.target.value;
-                  //console.log(userinput);
-                  setUsername(input)
-                }}
+            <TextField
+              fullWidth
+              value={username}
+              onChange={(event) => {
+                setUsername(event.target.value);
+
+                const user = ValidateUsername(event.target.value);
+
+                setValidUser(user);
+                console.log(validUser);
+              }}
               textFieldColors={{
                 neutral: {
                   textColor: appConfig.theme.colors.neutrals[200],
@@ -164,7 +173,7 @@ export default function PaginaInicial() {
                 borderRadius: "50%",
                 marginBottom: "16px",
               }}
-              src={`https://github.com/${username}.png`}
+              src={`https://github.com/${validUser.username}.png`}
             />
             <Text
               variant="body4"
@@ -177,6 +186,7 @@ export default function PaginaInicial() {
             >
               {username}
             </Text>
+            
           </Box>
           {/* Photo Area */}
         </Box>
