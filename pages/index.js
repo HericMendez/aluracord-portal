@@ -36,13 +36,10 @@ export default HomePage;
 export default function PaginaInicial() {
   //const username = "GLaDOS";
   const [username, setUsername] = useState("");
-  const [photo, setPhoto] = useState("");
 
   const [validUser, setValidUser] = useState({
     valid: true,
-    username: "github",
-    link: "",
-    src: "https://github.githubassets.com/images/modules/logos_page/GitHub-Mark.png",
+    username: "user",
   });
 
   const router = useRouter();
@@ -185,6 +182,15 @@ export default function PaginaInicial() {
               }}
             >
               {username}
+            </Text>
+            <Text
+              variant="body4"
+              styleSheet={{
+                color: appConfig.theme.colors.neutrals[200],
+
+              }}
+            >
+              {`https://github.com/${validUser.username}`}
             </Text>
             
           </Box>
