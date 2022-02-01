@@ -1,21 +1,54 @@
 import { Box, Text, TextField, Image, Button } from "@skynexui/components";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import appConfig from "../config.json";
+import { createClient } from "@supabase/supabase-js";
+
+const SUPABASE_ANON_KEY =
+  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjoiYW5vbiIsImlhdCI6MTY0MzcwNTkxMywiZXhwIjoxOTU5MjgxOTEzfQ.Xs4PgP65wB7ff6TLsEcJRxs_hiXd7S5VAFADLqkUiVg";
+const SUPABASE_URL = "https://arjfimmcwsilabhitlmo.supabase.co";
+const supabaseClient = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
 export default function ChatPage() {
-  const handleNewMsg = (newMsg) => {
-      const msgObject ={
-        id: msgArray.length,
-        from: 'User1',
-
-        text: newMsg 
-      }
-    setMsgArray([msgObject, ...msgArray]);
-    setMsg("");
-  };
 
   const [msg, setMsg] = useState("");
   const [msgArray, setMsgArray] = useState([]);
+
+
+  useEffect(() => {
+    supabaseClient
+      .from("mensagens")
+      .select("*")
+      .order('id', {ascending:false})
+      .then(({data}) => {
+        console.log("Result: ", data);
+        setMsgArray(data)
+      });
+  }, []);
+
+  const handleNewMsg = (newMsg) => {
+    const msgObject = {
+      //id: msgArray.length,
+      de: "HericMendez",
+
+      texto: newMsg,
+    };
+    
+    supabaseClient
+      .from('mensagens')
+      .insert([msgObject])
+      .then(({data})=>{
+        console.log("Oiaaaaaaa ", data)
+        setMsgArray([data[0], ...msgArray]);
+
+      })
+     /* 
+    
+    */
+    setMsg("");
+  };
+
+
+
   return (
     <Box
       styleSheet={{
@@ -59,7 +92,7 @@ export default function ChatPage() {
         >
           {/*{msgArray.map((currentMsg) => {
             //console.log(currentMsg)
-            return <li key={currentMsg.id}>{currentMsg.from}: {currentMsg.text}</li>;
+            return <li key={currentMsg.id}>{currentMsg.de}: {currentMsg.texto}</li>;
           })}*/}
           <MessageList messages={msgArray} />
 
@@ -79,7 +112,7 @@ export default function ChatPage() {
                 if (button.key === "Enter") {
                   button.preventDefault();
                   //console.log(button.key);
-                  if(msg.length!=0){
+                  if (msg.length != 0) {
                     handleNewMsg(msg);
                   }
                 }
@@ -100,24 +133,21 @@ export default function ChatPage() {
             <Button
               type="submit"
               label="Enviar"
-              onClick={(click)=>{
+              onClick={(click) => {
                 click.preventDefault();
-                if(msg.length!=0){
+                if (msg.length != 0) {
                   handleNewMsg(msg);
                 }
-                
               }}
-             
               buttonColors={{
                 contrastColor: appConfig.theme.colors.neutrals["000"],
                 mainColor: "#fd7702",
                 mainColorLight: "#ff8e00",
                 mainColorStrong: "#ff5003",
-                
               }}
               styleSheet={{
                 height: "40px",
-                bottom: "5px"
+                bottom: "5px",
               }}
             />
           </Box>
@@ -165,49 +195,47 @@ function MessageList(props) {
         marginBottom: "16px",
       }}
     >
-        {props.messages.map((msg)=>{
-            return(
-                <Text
-                key={msg.id}
-                tag="li"
+      {props.messages.map((msg) => {
+        return (
+          <Text
+            key={msg.id}
+            tag="li"
+            styleSheet={{
+              borderRadius: "5px",
+              padding: "6px",
+              marginBottom: "12px",
+              hover: {
+                backgroundColor: appConfig.theme.colors.neutrals[700],
+              },
+            }}
+          >
+            <Box
+              styleSheet={{
+                marginBottom: "8px",
+              }}
+            >
+              <Image
                 styleSheet={{
-                  borderRadius: "5px",
-                  padding: "6px",
-                  marginBottom: "12px",
-                  hover: {
-                    backgroundColor: appConfig.theme.colors.neutrals[700],
-                  },
-                  
+                  width: "20px",
+                  height: "20px",
+                  borderRadius: "50%",
+                  display: "inline-block",
+                  marginRight: "8px",
                 }}
+                src={`https://github.com/${msg.de}.png/`}
+              />
+              <Text tag="strong">{msg.de}</Text>
+              <Text
+                styleSheet={{
+                  fontSize: "10px",
+                  marginLeft: "8px",
+                  color: appConfig.theme.colors.neutrals[300],
+                }}
+                tag="span"
               >
-                <Box
-                  styleSheet={{
-                    marginBottom: "8px",
-                    
-                  }}
-                >
-                  <Image
-                    styleSheet={{
-                      width: "20px",
-                      height: "20px",
-                      borderRadius: "50%",
-                      display: "inline-block",
-                      marginRight: "8px",
-                    }}
-                    src={`glados.png`}
-                  />
-                  <Text tag="strong">{msg.from}</Text>
-                  <Text
-                    styleSheet={{
-                      fontSize: "10px",
-                      marginLeft: "8px",
-                      color: appConfig.theme.colors.neutrals[300],
-                    }}
-                    tag="span"
-                  >
-                    {new Date().toLocaleDateString()}
-                  </Text>
-                  {/*<Image
+                {new Date().toLocaleDateString()}
+              </Text>
+              {/*<Image
                     onClick={()=>{
                       console.log("clicou");
                     }}
@@ -220,15 +248,11 @@ function MessageList(props) {
                     }}
                     src={`bin.png`}
                   />*/}
-                </Box>
-                {msg.text}
-              </Text>
-              
-            )
-            
-           
-        })}
-      
+            </Box>
+            {msg.texto}
+          </Text>
+        );
+      })}
     </Box>
   );
 }
